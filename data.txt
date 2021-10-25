@@ -1,0 +1,54 @@
+<?php
+
+while ($row = mysqli_fetch_array($result)) {
+        return $result;
+    }
+//search
+if(isset($_GET['search']) && $_GET['search'] !=''){
+    $sql = 'select * from product where name like "%'.$_GET['search'].'%"';
+}
+else{
+    $sql = 'select * from product order by id ASC';
+}
+//$productlist = $productlist[0];
+
+
+$index = 1;
+foreach ($productlist as $prolist){
+    echo '<tr>
+            <td>'.($index++).'</td>
+            <td>'.$row['name'].'</td>
+            <td>'.$row['platforms'].'</td>
+            <td>$'.round($row['price'],2).'</td>
+            <td>$'.round($row['saleprice'],2).'</td>
+            <td><button class="btn btn-warning" onclick=\'window.open("input.php?id='.$row['id'].'","_self")\'>Edit</button></td>
+            <td><button class="btn btn-danger" onclick="deleteproduct('.$row['id'].')">Delete</button></td>
+        </tr>';
+}
+
+//pagination
+$sql = 'select * from product';
+$number_of_rows = 3;
+$result = executeResult($sql);
+
+$number_of_result = mysqli_num_rows($result);
+
+$number_of_pages = ceil($number_of_result/$number_of_rows);
+
+if(!isset($_GET['page'])){
+    $page = 1;
+}
+else{
+    $page = $_GET['page'];
+}
+
+$currentpage = ($page - 1)*$number_of_rows;
+
+$sql = 'select * from product LIMIT '.$currentpage.','.$number_of_rows;
+//
+$sql = 'select count(*) from product';
+$result_rows = executeResult($sql);
+$num_rows = mysqli_fetch_row($result_rows);
+$total_row = $num_rows[0];
+
+?>
